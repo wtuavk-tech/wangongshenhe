@@ -3,7 +3,7 @@ import { FilterBar } from './components/FilterBar';
 import { DataTable } from './components/DataTable';
 import { OrderDetailModal } from './components/OrderDetailModal';
 import { AuditRecord, FilterState } from './types';
-import { ChevronUp, ChevronDown } from 'lucide-react';
+import { Bell, Trophy, Megaphone, Activity, Search } from 'lucide-react';
 
 // Helper to generate 15 random records with generic names
 const generateMockData = (): AuditRecord[] => {
@@ -51,7 +51,7 @@ const INITIAL_FILTERS: FilterState = {
 
 function App() {
   const [filters, setFilters] = useState<FilterState>(INITIAL_FILTERS);
-  const [isFilterCollapsed, setIsFilterCollapsed] = useState(false);
+  const [isFilterCollapsed, setIsFilterCollapsed] = useState(true);
   const [data, setData] = useState<AuditRecord[]>(MOCK_DATA);
   const [selectedOrderNo, setSelectedOrderNo] = useState<string | null>(null);
 
@@ -89,40 +89,81 @@ function App() {
     <div className="min-h-screen bg-[#f0f2f5] p-4 font-sans text-sm">
       <div className="bg-white rounded-sm shadow-sm border border-gray-200">
         
-        {/* Header Title */}
-        <div className="border-b border-gray-200 px-6 py-3">
-          <h1 className="text-base font-bold text-gray-800">完工审核</h1>
+        {/* System Announcement Bar */}
+        <div className="bg-[#fdf6ec] text-[#e6a23c] px-4 py-2.5 flex items-center text-xs border-b border-[#faecd8] overflow-hidden h-[42px]">
+           {/* Static Label */}
+           <div className="flex items-center gap-2 mr-4 shrink-0 font-bold z-10 bg-[#fdf6ec] pr-2 shadow-[5px_0_5px_-5px_rgba(0,0,0,0.1)]">
+              <Bell size={14} className="text-[#e6a23c]" /> 
+              <span>系统公告</span>
+           </div>
+           
+           {/* Scrolling Content */}
+           <div className="flex-1 overflow-hidden relative h-full">
+              <div className="animate-marquee flex items-center gap-16 whitespace-nowrap absolute top-0 bottom-0">
+                  <span className="text-[#606266]">保存数据。</span>
+                  
+                  <div className="flex items-center gap-2">
+                      <Trophy size={14} className="text-[#e6a23c]" />
+                      <span className="font-bold text-[#e6a23c]">喜报:</span>
+                      <span className="text-[#606266]">恭喜上海浦东区张师傅获得本月“服务之星”称号，奖励现金 500 元！</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                      <Megaphone size={14} className="text-[#e6a23c]" />
+                      <span className="font-bold text-[#67c23a]">新功能上线:</span>
+                      <span className="text-[#606266]">“一键快找”功能已优化，支持按地域和项目模糊搜索，欢迎体验。</span>
+                  </div>
+              </div>
+           </div>
         </div>
 
-        {/* Filter Section */}
-        <div className="relative">
-            <FilterBar 
-              filters={filters} 
-              setFilters={setFilters} 
-              onSearch={handleSearch} 
-              onReset={handleReset}
-              onExport={handleExport}
-              collapsed={isFilterCollapsed}
-            />
-            
-            {/* Collapse/Expand Toggle & Divider */}
-            <div className="relative h-4 mt-2 mb-2">
-                <div className="absolute w-full top-1/2 border-t border-gray-100"></div>
-                <button 
-                    onClick={() => setIsFilterCollapsed(!isFilterCollapsed)}
-                    className="absolute right-6 top-1/2 -translate-y-1/2 z-10"
-                >
-                    {/* The specific blue trapezium-like tab from the screenshot */}
-                    <div className="bg-blue-500 text-white px-4 py-0.5 text-xs rounded-b-lg flex items-center justify-center cursor-pointer hover:bg-blue-600 shadow-sm" style={{ clipPath: 'polygon(0 0, 100% 0, 85% 100%, 15% 100%)', width: '80px' }}>
-                        <span className="mr-1">{isFilterCollapsed ? '展开' : '收起'}</span>
-                        {isFilterCollapsed ? <ChevronDown size={12} /> : <ChevronUp size={12} />}
-                    </div>
-                </button>
+        {/* Data Overview Bar */}
+        <div className="mx-4 mt-4 mb-0 bg-[#ecf5ff] p-3 rounded-sm flex flex-wrap items-center justify-between border border-[#d9ecff] gap-4">
+            <div className="flex items-center gap-2">
+                <Activity size={18} className="text-[#409eff]" />
+                <span className="font-bold text-[#303133] text-base">数据概览</span>
             </div>
+            
+            <div className="flex flex-wrap items-center gap-8 sm:gap-16 flex-1 justify-center sm:justify-start">
+                <div className="flex items-baseline gap-2">
+                    <span className="text-[#606266]">未审核数:</span>
+                    <span className="text-[#f56c6c] font-bold text-lg">12</span>
+                </div>
+                <div className="flex items-baseline gap-2">
+                    <span className="text-[#606266]">今日审核数:</span>
+                    <span className="text-[#409eff] font-bold text-lg">45</span>
+                </div>
+                 <div className="flex items-baseline gap-2">
+                    <span className="text-[#606266]">昨日审核数:</span>
+                    <span className="text-[#67c23a] font-bold text-lg">38</span>
+                </div>
+                 <div className="flex items-baseline gap-2">
+                    <span className="text-[#606266]">当月审核数:</span>
+                    <span className="text-[#e6a23c] font-bold text-lg">1,250</span>
+                </div>
+            </div>
+
+            <button 
+                onClick={() => setIsFilterCollapsed(!isFilterCollapsed)}
+                className="flex items-center gap-1 text-[#409eff] hover:text-[#66b1ff] text-sm cursor-pointer transition-colors whitespace-nowrap"
+            >
+                <Search size={14} />
+                <span>点这高级筛选</span>
+            </button>
         </div>
 
+        {/* Filter Section - controlled by toggle button above */}
+        <FilterBar 
+            filters={filters} 
+            setFilters={setFilters} 
+            onSearch={handleSearch} 
+            onReset={handleReset}
+            onExport={handleExport}
+            collapsed={isFilterCollapsed}
+        />
+            
         {/* Data Table */}
-        <div className="pb-4">
+        <div className="pt-4 pb-4">
            <DataTable data={data} onOrderClick={handleOrderClick} />
         </div>
 
